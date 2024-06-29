@@ -37,3 +37,33 @@ pipeline {
         }
     }
 }
+post {
+        success {
+            emailext (
+                to: 'mmalhotra419@gmail.com',
+                subject: 'Build Success: ${env.JOB_NAME} [${env.BUILD_NUMBER}]',
+                body: '''
+                    <p>Good news!</p>
+                    <p>The build was successful.</p>
+                    <p>Job: ${env.JOB_NAME}</p>
+                    <p>Build Number: ${env.BUILD_NUMBER}</p>
+                    <p><a href="${env.BUILD_URL}">Click here to view the build</a></p>
+                ''',
+                mimeType: 'text/html'
+            )
+        }
+
+        failure {
+            emailext (
+                to: 'mmalhotra419@gmail.com',
+                subject: 'Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]',
+                body: '''
+                    <p>Unfortunately, the build failed.</p>
+                    <p>Job: ${env.JOB_NAME}</p>
+                    <p>Build Number: ${env.BUILD_NUMBER}</p>
+                    <p><a href="${env.BUILD_URL}">Click here to view the build</a></p>
+                ''',
+                mimeType: 'text/html'
+            )
+        }
+    }
