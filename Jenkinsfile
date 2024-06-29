@@ -1,26 +1,23 @@
 pipeline {
     agent any
 
-//	tools {
-//		jdk 'jdk8'
-//	}
-//	environment {
-//		M2_INSTALL = "/usr/bin/mvn"
-//	}
+    environment {
+        M2_INSTALL = "/usr/bin/mvn"
+    }
 
     stages {
         stage('Clone-Repo') {
-	    	steps {
-	        	checkout scm
-	    	}
+            steps {
+                checkout scm
+            }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn install -Dmaven.test.skip=true'
+                sh 'mvn install -Dmaven.test.skip=false'
             }
         }
-		
+        
         stage('Unit Tests') {
             steps {
                 sh 'mvn compiler:testCompile'
@@ -36,37 +33,26 @@ pipeline {
             }
         }
 
-   	 stage('Send Email') {
+        stage('Send Email') {
             steps {
                 script {
-                    if (currentBuild.result == 'SUCCESS') {
-                        emailext (
-                            to: 'mmalhotra419@gmail.com',
-                            subject: 'Build Success: ${env.JOB_NAME} [${env.BUILD_NUMBER}]',
-                            body: '''
-                                <p>Good news!</p>
-                                <p>The build was successful.</p>
-                                <p>Job: ${env.JOB_NAME}</p>
-                                <p>Build Number: ${env.BUILD_NUMBER}</p>
-                                <p><a href="${env.BUILD_URL}">Click here to view the build</a></p>
-                            ''',
-                            mimeType: 'text/html'
-                        )
-                    } else {
-                        emailext (
-                            to: 'mmalhotra419@gmail.com',
-                            subject: 'Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]',
-                            body: '''
-                                <p>Unfortunately, the build failed.</p>
-                                <p>Job: ${env.JOB_NAME}</p>
-                                <p>Build Number: ${env.BUILD_NUMBER}</p>
-                                <p><a href="${env.BUILD_URL}">Click here to view the build</a></p>
-                            ''',
-                            mimeType: 'text/html'
-                        )
-                    }
+                    def subject = "Build ${currentBuild.result}: ${env.JOB_NAME} [${env.BUILD_NUMBER}]"
+                    def body = """
+                        <p>Job: ${env.JOB_NAME}</p>
+                        <p>Build Number: ${env.BUILD_NUMBER}</p>
+                        <p>Result: ${currentBuild.result}</p>
+                        <p><a href="${env.BUILD_URL}">Click here to view the build</a></p>
+                    """
+                    
+                    emailext (
+                        to: 'recipient@example.com', // Update with recipient's email address
+                        subject: subject,
+                        body: body,
+                        mimeType: 'text/html'
+                    )
                 }
             }
         }
     }
 }
+
