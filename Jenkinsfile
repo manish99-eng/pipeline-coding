@@ -41,7 +41,7 @@ pipeline {
                 script {
                     if (currentBuild.result == 'SUCCESS') {
                         emailext (
-                            to: 'recipient@example.com',
+                            to: 'mmalhotra419@gmail.com',
                             subject: 'Build Success: ${env.JOB_NAME} [${env.BUILD_NUMBER}]',
                             body: '''
                                 <p>Good news!</p>
@@ -54,7 +54,7 @@ pipeline {
                         )
                     } else {
                         emailext (
-                            to: 'recipient@example.com',
+                            to: 'mmalhotra419@gmail.com',
                             subject: 'Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]',
                             body: '''
                                 <p>Unfortunately, the build failed.</p>
