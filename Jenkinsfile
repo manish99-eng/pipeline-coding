@@ -35,35 +35,38 @@ pipeline {
                 sh 'sshpass -p "Japan@99" ssh manish99@172.17.0.2 "/home/manish99/apache-tomcat-9.0.90/bin/startup.sh"'
             }
         }
+
+   	 stage('Send Email') {
+            steps {
+                script {
+                    if (currentBuild.result == 'SUCCESS') {
+                        emailext (
+                            to: 'recipient@example.com',
+                            subject: 'Build Success: ${env.JOB_NAME} [${env.BUILD_NUMBER}]',
+                            body: '''
+                                <p>Good news!</p>
+                                <p>The build was successful.</p>
+                                <p>Job: ${env.JOB_NAME}</p>
+                                <p>Build Number: ${env.BUILD_NUMBER}</p>
+                                <p><a href="${env.BUILD_URL}">Click here to view the build</a></p>
+                            ''',
+                            mimeType: 'text/html'
+                        )
+                    } else {
+                        emailext (
+                            to: 'recipient@example.com',
+                            subject: 'Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]',
+                            body: '''
+                                <p>Unfortunately, the build failed.</p>
+                                <p>Job: ${env.JOB_NAME}</p>
+                                <p>Build Number: ${env.BUILD_NUMBER}</p>
+                                <p><a href="${env.BUILD_URL}">Click here to view the build</a></p>
+                            ''',
+                            mimeType: 'text/html'
+                        )
+                    }
+                }
+            }
+        }
     }
 }
-post {
-        success {
-            emailext (
-                to: 'mmalhotra419@gmail.com',
-                subject: 'Build Success: ${env.JOB_NAME} [${env.BUILD_NUMBER}]',
-                body: '''
-                    <p>Good news!</p>
-                    <p>The build was successful.</p>
-                    <p>Job: ${env.JOB_NAME}</p>
-                    <p>Build Number: ${env.BUILD_NUMBER}</p>
-                    <p><a href="${env.BUILD_URL}">Click here to view the build</a></p>
-                ''',
-                mimeType: 'text/html'
-            )
-        }
-
-        failure {
-            emailext (
-                to: 'mmalhotra419@gmail.com',
-                subject: 'Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]',
-                body: '''
-                    <p>Unfortunately, the build failed.</p>
-                    <p>Job: ${env.JOB_NAME}</p>
-                    <p>Build Number: ${env.BUILD_NUMBER}</p>
-                    <p><a href="${env.BUILD_URL}">Click here to view the build</a></p>
-                ''',
-                mimeType: 'text/html'
-            )
-        }
-    }
