@@ -45,7 +45,7 @@ pipeline {
                     """
                     
                     emailext (
-                        to: 'mmalhotra419@gmail.com', // Update with recipient's email address
+                        to: 'neetuy90@gmail.com', // Update with recipient's email address
                         subject: subject,
                         body: body,
                         mimeType: 'text/html'
