@@ -33,7 +33,7 @@ pipeline {
             }
         }
 
-        stage('Send Email') {
+        stage('Send Email Notification') {
             steps {
                 script {
                     def subject = "Build ${currentBuild.result}: ${env.JOB_NAME} [${env.BUILD_NUMBER}]"
